@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "esri-loader": "^2.2.0",
+    "hc-address-parcel-form": "git+https://github.com/Commbocc/hc-address-parcel-form.git",
+    "hc-error-alerts": "git+https://github.com/Commbocc/hc-error-alerts.git",
     "moment": "^2.20.1",
     "underscore": "^1.8.3",
     "vue": "^2.5.2",

@@ -1,28 +1,49 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <HelloWorld/>
+  <div id="HcHaulerApp">
+
+    <!-- <details><pre>{{ $store.state }}</pre></details> -->
+
+    <address-form v-on:search="search"></address-form>
+
+    <hauler-results></hauler-results>
+
+    <alert v-for="(alert, index) in $store.state.alerts.active" :alert="alert" :key="index"></alert>
+
+    <!-- <router-view></router-view> -->
+
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+import HaulerMixin from '@/mixins/HaulerMixin'
+
+import HaulerResults from '@/components/results/Hauler'
+import AddressForm from 'hc-address-parcel-form/src/components/AddressForm'
+import Alert from 'hc-error-alerts/src/components/Alert'
 
 export default {
   name: 'App',
+  mixins: [
+    HaulerMixin
+  ],
   components: {
-    HelloWorld
+    Alert,
+    HaulerResults,
+    AddressForm
+  },
+  methods: {
+    search () {
+      this.clearAlerts()
+      this.setFormIsSearching(true)
+      this.setProvider(null)
+      this.findAddressAndParcel().then(() => {
+        return this.findHauler(this.folio)
+      }).catch(err => {
+        this.addAlert(err)
+      }).then(() => {
+        this.setFormIsSearching(false)
+      })
+    }
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
