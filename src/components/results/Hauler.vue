@@ -22,6 +22,8 @@
             <ul class="list-unstyled">
               <li v-for="date in dateBlock.dates" class="my-1 p-1" :key="date.title" :class="(isHoliday(date, dateBlock.isRecycling)) ? 'bg-warning text-white' : 'bg-info text-white'">
 
+                <span class="fa fa-fw fa-calendar" aria-hidden="true"></span>
+
                 <strike v-if="isHoliday(date, dateBlock.isRecycling)">{{ date.format('dddd MMMM Do') }}</strike>
                 <template v-else>{{ date.format('dddd MMMM Do') }}</template>
 
