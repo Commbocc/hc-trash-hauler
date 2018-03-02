@@ -5,11 +5,15 @@
     <ul class="list-unstyled mb-0">
       <li>
         <span class="fa fa-fw fa-phone" aria-hidden="true"></span> <span class="sr-only">Phone:</span>
-        {{ provider.details.phone }}
+        <a :href="`tel:${provider.details.phone}`">
+          {{ formatPhone(provider.details.phone) }}
+        </a>
       </li>
       <li>
         <span class="fa fa-fw fa-fax" aria-hidden="true"></span> <span class="sr-only">Fax:</span>
-        {{ provider.details.fax }}
+        <a :href="`fax:${provider.details.fax}`">
+          {{ formatPhone(provider.details.fax) }}
+        </a>
       </li>
       <li>
         <span class="fa fa-fw fa-envelope" aria-hidden="true"></span> <span class="sr-only">Email:</span>
@@ -26,6 +30,11 @@
 <script>
 export default {
   name: 'provider',
-  props: ['provider']
+  props: ['provider'],
+  methods: {
+    formatPhone (n) {
+      return `(${n.substring(0, 3)}) ${n.substring(3, 6)}-${n.substring(6, 10)}`
+    }
+  }
 }
 </script>
