@@ -16,6 +16,7 @@
 
 <script>
 import HaulerMixin from '@/mixins/HaulerMixin'
+import LogMixin from '@/mixins/LogMixin'
 
 import HaulerResults from '@/components/results/Hauler'
 import AddressForm from 'hc-address-parcel-form/src/components/AddressForm'
@@ -24,7 +25,8 @@ import Alert from 'hc-error-alerts/src/components/Alert'
 export default {
   name: 'App',
   mixins: [
-    HaulerMixin
+    HaulerMixin,
+    LogMixin
   ],
   components: {
     Alert,
@@ -43,14 +45,6 @@ export default {
       }).then(() => {
         this.setFormIsSearching(false)
         this.log()
-      })
-    },
-    log () {
-      var logUrl = 'http://logs-01.loggly.com/inputs/ff424bed-98df-4ab6-ac0e-49dc5d9ae378/tag/hc-trash-hauler/'
-      this.$http.post(logUrl, JSON.stringify(this.$store.state), {
-        headers: {
-          'Content-Type': 'text/plain'
-        }
       })
     }
   }
