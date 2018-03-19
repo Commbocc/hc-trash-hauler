@@ -1,27 +1,30 @@
 <template lang="html">
-  <div>
-    <strong>{{ provider.details.name }}</strong>
-    <p v-text="provider.details.address"></p>
+  <div class="card-body">
+
+    <h4 class="card-title mb-0">{{ provider.name }}</h4>
+
+    <p v-text="provider.address"></p>
+
     <ul class="list-unstyled mb-0">
       <li>
         <span class="fa fa-fw fa-phone" aria-hidden="true"></span> <span class="sr-only">Phone:</span>
-        <a :href="`tel:${provider.details.phone}`">
-          {{ formatPhone(provider.details.phone) }}
+        <a :href="`tel:${provider.phone}`">
+          {{ formatPhone(provider.phone) }}
         </a>
       </li>
       <li>
         <span class="fa fa-fw fa-fax" aria-hidden="true"></span> <span class="sr-only">Fax:</span>
-        <a :href="`fax:${provider.details.fax}`">
-          {{ formatPhone(provider.details.fax) }}
+        <a :href="`fax:${provider.fax}`">
+          {{ formatPhone(provider.fax) }}
         </a>
       </li>
       <li>
         <span class="fa fa-fw fa-envelope" aria-hidden="true"></span> <span class="sr-only">Email:</span>
-        <a :href="'mailto:'+provider.details.email" v-text="provider.details.email"></a><br>
+        <a :href="'mailto:'+provider.email" v-text="provider.email"></a><br>
       </li>
       <li>
         <span class="fa fa-fw fa-globe" aria-hidden="true"></span> <span class="sr-only">Web:</span>
-        <a :href="provider.details.website" target="_blank">Website</a>
+        <a :href="provider.website" target="_blank">Website</a>
       </li>
     </ul>
   </div>

@@ -19,11 +19,9 @@
     "hc-address-parcel-form": "git+https://github.com/Commbocc/hc-address-parcel-form.git",
     "hc-error-alerts": "git+https://github.com/Commbocc/hc-error-alerts.git",
     "moment": "^2.21.0",
-    "npm": "^5.7.1",
     "underscore": "^1.8.3",
     "vue": "^2.5.2",
-    "vue-resource": "^1.5.0",
-    "vuex": "^3.0.1"
+    "vue-resource": "^1.5.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
