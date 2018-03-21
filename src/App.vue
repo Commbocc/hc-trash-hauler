@@ -58,6 +58,7 @@ export default {
 
       promise.then(result => {
         this.formResult = result
+        this.formResult.errors.forEach(err => { throw err })
         return SharedHaulerEndpoint.queryByFolio(result.parcelData.folio).then(attributes => {
           this.provider = new Provider(attributes)
           this.schedule = new Schedule(attributes)
