@@ -1,4 +1,5 @@
 import * as esriLoader from 'esri-loader'
+import CityProvider from './CityProvider'
 import _ from 'underscore'
 
 export default class Provider {
@@ -35,7 +36,9 @@ export default class Provider {
           if (response.features.length) {
             return new Provider(response.features[0].attributes)
           } else {
-            throw new Error('A Solid Waste District could not be determined.')
+            return CityProvider.findByLocation(locationData).then(cityProvider => {
+              return cityProvider
+            })
           }
         })
       })
