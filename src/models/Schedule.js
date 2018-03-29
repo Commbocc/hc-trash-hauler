@@ -1,3 +1,4 @@
+import * as esriLoader from 'esri-loader'
 import moment from 'moment'
 import _ from 'underscore'
 
@@ -112,6 +113,42 @@ export default class Schedule {
     return false
   }
 
-  // // returns promise
-  // static findScheduleByFolio (folio) {}
+  // esri settings
+  static get esri () {
+    return {
+      url: 'https://maps.hillsboroughcounty.org/arcgis/rest/services/InfoLayers/SW_HAULER_DATA2/MapServer/1',
+      fields: ['*'],
+      fKey: 'Folio'
+    }
+  }
+
+  // returns promise
+  static findByFolio (folio) {
+    if (folio) {
+      return esriLoader.loadModules([
+        'esri/tasks/QueryTask',
+        'esri/tasks/support/Query'
+      ]).then(([QueryTask, Query]) => {
+        var queryTask = new QueryTask({
+          url: Schedule.esri.url
+        })
+
+        var query = new Query()
+        query.where = (folio) ? `${Schedule.esri.fKey}=${folio}` : '1=0'
+
+        query.returnGeometry = false
+        query.outFields = Schedule.esri.fields
+
+        return queryTask.execute(query).then(response => {
+          if (response.features.length) {
+            return new Schedule(response.features[0].attributes)
+          } else {
+            throw new Error('There is currently no Trash or Recycling Schedule information associated with that address.')
+          }
+        })
+      })
+    } else {
+      return Promise.resolve(null)
+    }
+  }
 }

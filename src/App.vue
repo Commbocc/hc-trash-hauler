@@ -5,10 +5,10 @@
     <div ref="errorAlerts" is="HcErrorAlerts"></div>
 
     <div v-if="provider || schedule" class="card mb-3">
-      <h6 class="card-header bg-secondary text-white">
+      <strong class="card-header bg-secondary text-white">
         Results for:
-        <strong>{{ formResult.parcelData.address }}</strong>
-      </h6>
+        {{ formResult.inputAddress }}
+      </strong>
 
       <div v-if="provider" is="ProviderResult" :provider="provider" class="text-center"></div>
 
@@ -25,7 +25,6 @@ import HcAddressParcelForm from 'hc-address-parcel-form'
 import ProviderResult from '@/components/Provider'
 import ScheduleResult from '@/components/Schedule'
 
-import SharedHaulerEndpoint from '@/models/SharedHaulerEndpoint'
 import Provider from '@/models/Provider'
 import Schedule from '@/models/Schedule'
 
@@ -54,19 +53,27 @@ export default {
       this.formResult = null
       this.provider = null
       this.schedule = null
+      this.errors = []
       this.$refs.errorAlerts.clearAlerts()
 
       promise.then(result => {
         this.formResult = result
-        this.formResult.errors.forEach(err => { throw err })
-        return SharedHaulerEndpoint.queryByFolio(result.parcelData.folio).then(attributes => {
-          this.provider = new Provider(attributes)
-          this.schedule = new Schedule(attributes)
+        this.errors = this.formResult.errors
+      }).then(() => {
+        return Provider.findByLocation(this.formResult.locationData).then(provider => {
+          this.provider = provider
+        })
+      }).then(() => {
+        var folio = (this.formResult.parcelData) ? this.formResult.parcelData.folio : null
+        return Schedule.findByFolio(folio).then(schedule => {
+          this.schedule = schedule
         })
       }).catch(err => {
-        this.$refs.errorAlerts.addAlert(err)
+        this.errors.push(err)
       }).then(() => {
-        this.errors = this.$refs.errorAlerts.errorLog
+        this.errors.forEach(err => {
+          this.$refs.errorAlerts.addAlert(err)
+        })
         this.$refs.addressForm.isSearching = false
         this.log(this.$data)
       })
