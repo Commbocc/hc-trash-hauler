@@ -16,7 +16,6 @@ export default class CityProvider {
 
   // returns promise
   static findByLocation (locationData) {
-    console.log('promise')
     if (locationData) {
       return esriLoader.loadModules([
         'esri/tasks/QueryTask',
@@ -36,7 +35,7 @@ export default class CityProvider {
           if (response.features.length) {
             return new CityProvider(response.features[0].attributes)
           } else {
-            throw new Error('A Solid Waste Provider could not be determined.')
+            return null
           }
         })
       })

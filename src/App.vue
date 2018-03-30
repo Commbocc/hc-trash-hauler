@@ -15,7 +15,7 @@
       <div v-if="schedule" is="ScheduleResult" :schedule="schedule"></div>
     </div>
 
-    <!-- <details open><pre>{{ $data }}</pre></details> -->
+    <details open><pre>{{ $data }}</pre></details>
   </div>
 </template>
 
@@ -68,12 +68,19 @@ export default {
         return Schedule.findByFolio(folio).then(schedule => {
           this.schedule = schedule
         })
+      }).then(() => {
+        if (!this.provider && !this.schedule) {
+          throw new Error('A Solid Waste Provider and Schedule could not be determined.')
+        } else if (this.provider && !this.schedule) {
+          throw new Error('We weren\'t able to find your trash and recycling schedule, but we know who your hauler is. Contact the provider listed below for your pickup schedule.')
+        }
       }).catch(err => {
         this.errors.push(err)
       }).then(() => {
         this.errors.forEach(err => {
           this.$refs.errorAlerts.addAlert(err)
         })
+        this.errors = this.errors.map(e => e.message)
         this.$refs.addressForm.isSearching = false
         this.log(this.$data)
       })

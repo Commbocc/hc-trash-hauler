@@ -143,7 +143,7 @@ export default class Schedule {
           if (response.features.length) {
             return new Schedule(response.features[0].attributes)
           } else {
-            throw new Error('There is currently no Trash or Recycling Schedule information associated with that address.')
+            return null
           }
         })
       })
