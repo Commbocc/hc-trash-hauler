@@ -15,7 +15,7 @@
       <div v-if="schedule" is="ScheduleResult" :schedule="schedule"></div>
     </div>
 
-    <details open><pre>{{ $data }}</pre></details>
+    <!-- <details open><pre>{{ $data }}</pre></details> -->
   </div>
 </template>
 
