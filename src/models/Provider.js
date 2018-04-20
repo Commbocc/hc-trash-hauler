@@ -1,4 +1,4 @@
-import * as esriLoader from 'esri-loader'
+import { loadModules } from 'esri-loader'
 import CityProvider from './CityProvider'
 import _ from 'underscore'
 
@@ -17,34 +17,30 @@ export default class Provider {
 
   // returns promise
   static findByLocation (locationData) {
-    if (locationData) {
-      return esriLoader.loadModules([
-        'esri/tasks/QueryTask',
-        'esri/tasks/support/Query'
-      ]).then(([QueryTask, Query]) => {
-        var queryTask = new QueryTask({
-          url: Provider.esri.url
-        })
-
-        var query = new Query()
-        query.geometry = locationData
-
-        query.returnGeometry = false
-        query.outFields = Provider.esri.fields
-
-        return queryTask.execute(query).then(response => {
-          if (response.features.length) {
-            return new Provider(response.features[0].attributes)
-          } else {
-            return CityProvider.findByLocation(locationData).then(cityProvider => {
-              return cityProvider
-            })
-          }
-        })
+    return loadModules([
+      'esri/tasks/QueryTask',
+      'esri/tasks/support/Query'
+    ]).then(([QueryTask, Query]) => {
+      var queryTask = new QueryTask({
+        url: Provider.esri.url
       })
-    } else {
-      return Promise.resolve(null)
-    }
+
+      var query = new Query()
+      query.geometry = locationData
+
+      query.returnGeometry = false
+      query.outFields = Provider.esri.fields
+
+      return queryTask.execute(query).then(response => {
+        if (response.features.length) {
+          return new Provider(response.features[0].attributes)
+        } else {
+          return CityProvider.findByLocation(locationData).then(cityProvider => {
+            return cityProvider
+          })
+        }
+      })
+    })
   }
 
   // this is bad practice, consider moving these features to their own endpoint
