@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <form ref="search" is="HcEsriSearchWidget" @submit="reset" @result="handleResult"></form>
+    <form ref="searchWidget" is="HcEsriSearchWidget" @submit="reset" @result="handleResult"></form>
 
     <div ref="errorAlerts" is="HcErrorAlerts"></div>
 
@@ -15,7 +15,7 @@
       <div v-if="schedule" is="ScheduleResult" :schedule="schedule"></div>
     </div>
 
-    <!-- <details open><pre>{{ $data }}</pre></details> -->
+    <details v-if="isDev" open><pre>{{ $data }}</pre></details>
   </div>
 </template>
 
@@ -26,7 +26,7 @@ import ProviderResult from '@/components/Provider'
 import ScheduleResult from '@/components/Schedule'
 import Provider from '@/models/Provider'
 import Schedule from '@/models/Schedule'
-import LogMixin from '@/mixins/LogMixin'
+import LogglyMixin from '@/mixins/LogglyMixin'
 
 export default {
   name: 'App',
@@ -36,7 +36,7 @@ export default {
     ProviderResult,
     ScheduleResult
   },
-  mixins: [LogMixin],
+  mixins: [LogglyMixin],
   data () {
     return {
       searchResult: null,
@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     reset () {
-      this.$refs.search.isSearching = false
+      this.$refs.searchWidget.isSearching = false
       this.searchResult = null
       this.provider = null
       this.parcel = null
@@ -60,7 +60,7 @@ export default {
       if (this.searchResult.error) {
         this.handleError(this.searchResult.error)
       } else if (this.searchResult.hasFeature()) {
-        this.$refs.search.isSearching = true
+        this.$refs.searchWidget.isSearching = true
         this.findProvider().then(this.findSchedule).then(() => {
           if (!this.provider && !this.schedule) {
             throw new Error('A Solid Waste Provider and Schedule could not be determined.')
@@ -68,22 +68,22 @@ export default {
             throw new Error('We weren\'t able to find your trash and recycling schedule, but we know who your hauler is. Contact the provider listed below for your pickup schedule.')
           }
         }).catch(this.handleError).then(() => {
-          this.$refs.search.status = null
-          this.$refs.search.isSearching = false
-          this.log(this.$data)
+          this.$refs.searchWidget.status = null
+          this.$refs.searchWidget.isSearching = false
+          this.loggly(this.$data)
         })
       }
     },
     findProvider () {
-      this.$refs.search.status = 'Finding Trash/Recycling Provider...'
+      this.$refs.searchWidget.status = 'Finding Trash/Recycling Provider...'
       return Provider.findByLocation(this.searchResult.result.feature.geometry).then(provider => {
         this.provider = provider
       }).catch(this.handleError)
     },
     findSchedule () {
-      this.$refs.search.status = 'Finding Parcel...'
-      return Parcel.findByGeometry(this.searchResult.result.feature.geometry).then(parcel => {
-        this.$refs.search.status = 'Finding Trash/Recycling Schedule...'
+      this.$refs.searchWidget.status = 'Finding Parcel...'
+      return this.$refs.searchWidget.queryFeatures(Parcel.esriSearchSource.featureLayer.url).then(feature => new Parcel(feature)).then(parcel => {
+        this.$refs.searchWidget.status = 'Finding Trash/Recycling Schedule...'
         return Schedule.findByFolio(parcel.folio).then(schedule => {
           this.schedule = schedule
         })
@@ -93,6 +93,11 @@ export default {
       console.warn(err)
       this.$refs.errorAlerts.addAlert(err)
       this.errors.push(err.message)
+    }
+  },
+  computed: {
+    isDev () {
+      return process.env.NODE_ENV !== 'production'
     }
   }
 }
