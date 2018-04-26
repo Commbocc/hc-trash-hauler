@@ -1,4 +1,4 @@
-import * as esriLoader from 'esri-loader'
+import { loadModules } from 'esri-loader'
 import moment from 'moment'
 import _ from 'underscore'
 
@@ -125,7 +125,7 @@ export default class Schedule {
   // returns promise
   static findByFolio (folio) {
     if (folio) {
-      return esriLoader.loadModules([
+      return loadModules([
         'esri/tasks/QueryTask',
         'esri/tasks/support/Query'
       ]).then(([QueryTask, Query]) => {

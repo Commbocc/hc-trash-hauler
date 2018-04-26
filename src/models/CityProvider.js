@@ -1,4 +1,4 @@
-import * as esriLoader from 'esri-loader'
+import { loadModules } from 'esri-loader'
 import _ from 'underscore'
 
 export default class CityProvider {
@@ -16,32 +16,28 @@ export default class CityProvider {
 
   // returns promise
   static findByLocation (locationData) {
-    if (locationData) {
-      return esriLoader.loadModules([
-        'esri/tasks/QueryTask',
-        'esri/tasks/support/Query'
-      ]).then(([QueryTask, Query]) => {
-        var queryTask = new QueryTask({
-          url: CityProvider.esri.url
-        })
-
-        var query = new Query()
-        query.geometry = locationData
-
-        query.returnGeometry = false
-        query.outFields = CityProvider.esri.fields
-
-        return queryTask.execute(query).then(response => {
-          if (response.features.length) {
-            return new CityProvider(response.features[0].attributes)
-          } else {
-            return null
-          }
-        })
+    return loadModules([
+      'esri/tasks/QueryTask',
+      'esri/tasks/support/Query'
+    ]).then(([QueryTask, Query]) => {
+      var queryTask = new QueryTask({
+        url: CityProvider.esri.url
       })
-    } else {
-      return Promise.resolve(null)
-    }
+
+      var query = new Query()
+      query.geometry = locationData
+
+      query.returnGeometry = false
+      query.outFields = CityProvider.esri.fields
+
+      return queryTask.execute(query).then(response => {
+        if (response.features.length) {
+          return new CityProvider(response.features[0].attributes)
+        } else {
+          return null
+        }
+      })
+    })
   }
 
   // this is bad practice, consider moving these features to their own endpoint
