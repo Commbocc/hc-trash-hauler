@@ -3,14 +3,14 @@ import _ from 'underscore'
 
 export default class CityProvider {
   constructor (attributes) {
-    return _.find(CityProvider.all(), p => _.contains(p.ids, attributes.CITY))
+    return _.find(CityProvider.all(), p => _.contains(p.ids, attributes.NAME))
   }
 
   // esri settings
   static get esri () {
     return {
-      url: 'https://maps.hillsboroughcounty.org/arcgis/rest/services/MaintStar/MapServiceBaseMap_20150801_Production/MapServer/81',
-      fields: ['CITY']
+      url: 'https://maps.hillsboroughcounty.org/arcgis/rest/services/MaintStar/MapServiceBaseMap_20150801_Production_1/MapServer/80',
+      fields: ['NAME']
     }
   }
 
